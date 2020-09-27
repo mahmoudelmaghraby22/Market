@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "Name": "Adidas"
+  },
+  {
+    "Id": 2,
+    "Name": "Nike"
+  },
+  {
+    "Id": 3,
+    "Name": "Zara"
+  },
+  {
+    "Id": 4,
+    "Name": "Puma"
+  },
+  {
+    "Id": 5,
+    "Name": "Apple"
+  },
+  {
+    "Id": 6,
+    "Name": "Samsung"
+  }
+]
