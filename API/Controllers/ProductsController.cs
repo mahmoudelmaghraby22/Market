@@ -9,9 +9,9 @@ using Core.Specification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+    
 namespace API.Controllers
 {
-    
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<ProductType> _productTypeRepo;
@@ -28,9 +28,9 @@ namespace API.Controllers
         }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+    public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(string sort)
     {
-        var spec = new ProductsWithTypesAndBrandsSpecifications();
+        var spec = new ProductsWithTypesAndBrandsSpecifications(sort);
 
         var products = await _productRepo.ListAsync(spec);
 
