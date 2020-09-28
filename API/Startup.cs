@@ -8,6 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using API.Helpers;
+using API.Middleware;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using API.Errors;
+using Microsoft.OpenApi.Models;
 
 namespace API
 {
@@ -28,15 +33,37 @@ namespace API
             services.AddControllers();
             services.AddDbContext<StoreContext>(x =>
                 x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+
+            services.Configure<ApiBehaviorOptions>(options => 
+            {
+                options.InvalidModelStateResponseFactory = ActionContext =>
+                {
+                    var errors = ActionContext.ModelState
+                        .Where(e => e.Value.Errors.Count > 0)
+                        .SelectMany(x => x.Value.Errors)
+                        .Select(x => x.ErrorMessage).ToArray();
+
+                    var errorResponse = new ApiValidationErrorResponse
+                    {
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(errorResponse);
+                };
+            });
+
+            services.AddSwaggerGen(c => 
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "MarketApp Api", Version = "V1"});
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
             app.UseHttpsRedirection();
 
@@ -44,6 +71,9 @@ namespace API
             app.UseStaticFiles();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(x => {x.SwaggerEndpoint("/swagger/v1/swagger.json", "MarketApp API v1");});
 
             app.UseEndpoints(endpoints =>
             {
