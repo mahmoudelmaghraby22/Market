@@ -11,6 +11,22 @@ namespace API.Extensions
             services.AddSwaggerGen(c => 
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "MarketApp Api", Version = "V1"});
+                var securitySchema = new OpenApiSecurityScheme
+                {
+                    Description = "JWT Auth Bearer Scheme",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Scheme = "bearer",
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+
+                c.AddSecurityDefinition("Bearer", securitySchema);
+                var securityRequirment = new OpenApiSecurityRequirement {{securitySchema, new[]{"Bearer"}}};
+                c.AddSecurityRequirement(securityRequirment);
             });
 
             return services;
