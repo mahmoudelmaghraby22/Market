@@ -9,7 +9,9 @@ export class LoadinInterceptor implements HttpInterceptor {
     constructor(private busyServices: BusyService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        this.busyServices.busy();
+        if (!req.url.includes('emailexists')) {
+            this.busyServices.busy();
+        }
         return next.handle(req).pipe(
             delay(1000),
             finalize(() => {
