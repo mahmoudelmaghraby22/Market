@@ -6,12 +6,15 @@ import { BasketService } from './basket/basket.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'Market';
 
-  constructor(private basketServices: BasketService, private accountService: AccountService){}
+  constructor(
+    private basketServices: BasketService,
+    private accountService: AccountService
+  ) {}
 
   ngOnInit(): void {
     this.loadBasket();
@@ -20,23 +23,27 @@ export class AppComponent implements OnInit {
 
   loadCurrentUser() {
     const token = localStorage.getItem('token');
-    if (token) {
-      this.accountService.loadCurrentUser(token).subscribe(() => {
+    this.accountService.loadCurrentUser(token).subscribe(
+      () => {
         console.log('loaded user');
-      }, error => {
+      },
+      (error) => {
         console.log(error);
-      });
-    }
+      }
+    );
   }
 
   loadBasket() {
     const basketId = localStorage.getItem('basket_id');
     if (basketId) {
-      this.basketServices.getBasket(basketId).subscribe(() => {
-        console.log('Insialised basket');
-      }, error => {
-        console.log(error);
-      });
+      this.basketServices.getBasket(basketId).subscribe(
+        () => {
+          console.log('Insialised basket');
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }
 }
