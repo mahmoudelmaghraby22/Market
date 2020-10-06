@@ -23,7 +23,7 @@ namespace Infrastructure.Identity
                         Street = "10th street ",
                         City = "Abu Hammad",
                         State = "Ash Sharqia",
-                        ZipCode ="90210"
+                        Zipcode ="90210"
                     }
                 };
 

@@ -1,0 +1,63 @@
+<ng-container *ngIf="basket$ | async">
+    <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+                <div class="text-uppercase px-3 p-2">Product</div>
+              </th>
+              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+                <div class="text-uppercase py-2">Price</div>
+              </th>
+              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+                <div class="text-uppercase py-2">Quantity</div>
+              </th>
+              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+                <div class="text-uppercase py-2">Total</div>
+              </th>
+              <th *ngIf="isBasket" class="border-0 bg-light" scope="col">
+                <div class="text-uppercase py-2">Remove</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of (basket$ | async).items">
+              <th scope="row">
+                <div class="p-2">
+                  <img class="img-fluid" src="{{item.pictureUrl}}" alt="{{item.productName}}" style="max-height: 50px;">
+                  <div class="ml-3 d-inline-block align-middle">
+                    <h5 class="mb-0">
+                      <a routerLink="/shop/{{item.id}}" class="text-dark">{{item.productName}}</a>
+                    </h5>
+                    <span class="text-muted font-weight-normal d-block">Type: {{item.type}}</span>
+                  </div>
+                </div>
+              </th>
+              <td class="align-middle"><strong>{{item.price | currency}}</strong></td>
+              <td class="align-middle">
+                <div class="align-items-center d-flex">
+                  <div class="align-items-center d-flex" [class.justify-content-center]="!isBasket">
+                    <i *ngIf="isBasket" (click)="decrementItemQuantity(item)" class="fa fa-minus-circle text-warning mr-2"
+                      style="cursor: pointer; font-size: 2em;"></i>
+      
+                    <span class="font-weight-bold">{{item.quantity}}</span>
+      
+                    <i *ngIf="isBasket" (click)="incrementItemQuantity(item)" class="fa fa-plus-circle text-warning ml-2"
+                      style="cursor: pointer; font-size: 2em;"></i>
+                  </div>
+                </div>
+              </td>
+              <td class="align-middle"><strong>{{item.price * item.quantity | currency}}</strong></td>
+              <td class="align-middle text-center">
+                <a class="text-danger">
+                  <i *ngIf="isBasket" (click)="removeBasketItem(item)" class="fa fa-trash"
+                    style="cursor: pointer; font-size: 2em;"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+</ng-container>
+
+
