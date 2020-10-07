@@ -1,27 +1,27 @@
-<ng-container *ngIf="basket$ | async">
+<ng-container *ngIf="items.length > 0">
     <div class="table-responsive">
-        <table class="table">
-          <thead>
+        <table class="table table-borderless">
+          <thead [class.thead-light]="isBasket || isOrder" class="border-0 py-2">
             <tr>
-              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+              <th  scope="col">
                 <div class="text-uppercase px-3 p-2">Product</div>
               </th>
-              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+              <th scope="col">
                 <div class="text-uppercase py-2">Price</div>
               </th>
-              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+              <th scope="col">
                 <div class="text-uppercase py-2">Quantity</div>
               </th>
-              <th class="border-0" scope="col" [class.bg-light]="isBasket">
+              <th scope="col">
                 <div class="text-uppercase py-2">Total</div>
               </th>
-              <th *ngIf="isBasket" class="border-0 bg-light" scope="col">
+              <th *ngIf="isBasket" scope="col">
                 <div class="text-uppercase py-2">Remove</div>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of (basket$ | async).items">
+            <tr *ngFor="let item of items">
               <th scope="row">
                 <div class="p-2">
                   <img class="img-fluid" src="{{item.pictureUrl}}" alt="{{item.productName}}" style="max-height: 50px;">
@@ -29,7 +29,7 @@
                     <h5 class="mb-0">
                       <a routerLink="/shop/{{item.id}}" class="text-dark">{{item.productName}}</a>
                     </h5>
-                    <span class="text-muted font-weight-normal d-block">Type: {{item.type}}</span>
+                    <span *ngIf="item.type" class="text-muted font-weight-normal d-block">Type: {{item.type}}</span>
                   </div>
                 </div>
               </th>
