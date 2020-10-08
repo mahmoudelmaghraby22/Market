@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Core.Entities;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
+using Core.Specification;
 using Microsoft.Extensions.Configuration;
 using Stripe;
+using Order = Core.Entities.OrderAggregate.Order;
 using Product = Core.Entities.Product;
 
 namespace Infrastructure.services
@@ -27,6 +29,9 @@ namespace Infrastructure.services
             StripeConfiguration.ApiKey = _congig["StripeSettings:Secretkey"];
 
             var basket = await _basketRepository.GetBasketAsync(basketId);
+
+            if (basket == null) return null;
+
             var shippingPrice = 0m;
 
             if (basket.DeliveryMethodId.HasValue)
@@ -79,6 +84,35 @@ namespace Infrastructure.services
             await _basketRepository.UpdateBasketAsync(basket);
 
             return basket;
+        }
+
+        public async Task<Order> UpdateOrderPaymentFailed(string paymentIntentId)
+        {
+            var spec = new OrderByPaymentIntentIdSpecifications(paymentIntentId);
+            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if(order == null) return null;
+
+            order.Status = OrderStatus.PaymentFailed;
+            
+            await _unitOfWork.Complete();
+
+            return order;
+        }
+
+        public async Task<Order> UpdateOrderPaymentSucceeded(string paymentIntentId)
+        {
+            var spec = new OrderByPaymentIntentIdSpecifications(paymentIntentId);
+            var order = await _unitOfWork.Repository<Order>().GetEntityWithSpec(spec);
+
+            if(order == null) return null;
+
+            order.Status = OrderStatus.PaymentRecevied;
+            _unitOfWork.Repository<Order>().Update(order);
+
+            await _unitOfWork.Complete();
+
+            return order;
         }
     }
 }
